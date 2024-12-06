@@ -83,6 +83,12 @@ const LoginPage: React.FC = () => {
                 Register
               </a>
             </p>
+            <p>
+              Are you an Admin? {' '}
+              <a href="/pages/adminLogin" className="link link-primary">
+                Admin Login
+              </a>
+            </p>
           </div>
         </div>
       </div>

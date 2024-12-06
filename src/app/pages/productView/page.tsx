@@ -48,7 +48,7 @@ export default function ViewProductPage({ params }: { params: { id: string } }) 
       <div className="card w-96 bg-base-100 shadow-xl">
         <figure>
           <Image 
-            src={`http://127.0.0.1:8000/storage/${product.image}`} 
+            src={`${product.image}`} 
             alt={product.name} 
             width={384} 
             height={384} 

@@ -130,7 +130,7 @@ export default function Home() {
       <div className="hero min-h-screen bg-base-200">
         <div className="hero-content flex-col lg:flex-row-reverse">
           <img 
-            src="/api/placeholder/600/400" 
+            src="http://127.0.0.1:8000/storage/heroIMG.jpg" 
             alt="Hero Product" 
             className="max-w-sm rounded-lg shadow-2xl" 
           />
@@ -172,67 +172,64 @@ export default function Home() {
 
       {/* Featured Products */}
       <section className="py-16 bg-base-200">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold">Featured Products</h2>
-            <div className="form-control">
-              <div className="input-group">
-                <input 
-                  type="text" 
-                  placeholder="Search products..." 
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  className="input input-bordered w-full" 
-                />
-                <button className="btn btn-square" aria-label="s">
-                  <Search />
-                </button>
-              </div>
+      <div className="container mx-auto px-4">
+        <div className="flex flex-wrap justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold">Featured Products</h2>
+          <div className="form-control w-full md:w-auto mt-4 md:mt-0">
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className="input input-bordered w-full md:w-80 pl-12 pr-4 rounded-lg shadow-md"
+              />
+              <Search className="absolute left-4 w-5 h-5 text-gray-400" />
             </div>
           </div>
-
-          {filteredProducts.length === 0 ? (
-            <p className="text-center text-gray-500">No products found.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <div 
-                  key={product.id} 
-                  className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+        </div>
+        {filteredProducts.length === 0 ? (
+          <p className="text-center text-gray-500">No products found.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
+              <div
+                key={product.id}
+                className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+              >
+                <figure
+                  className="cursor-pointer"
+                  onClick={() => handleProductClick(product)}
                 >
-                  <figure 
-                    className="cursor-pointer"
-                    onClick={() => handleProductClick(product)}
-                  >
-                    <img 
-                      src={`http://127.0.0.1:8000/storage/${product.image}`}
-                      alt={product.name} 
-                      className="w-full h-48 object-cover"
-                    />
-                  </figure>
-                  <div className="card-body">
-                    <h3 className="card-title">{product.name}</h3>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <Star className="w-5 h-5 text-yellow-500 mr-1" />
-                        <span>{product.rating}/5</span>
-                      </div>
-                      <div className="font-bold text-xl">${product.price.toFixed(2)}</div>
+                  <img
+                    src={`http://127.0.0.1:8000/storage/${product.image}`}
+                    alt={product.name}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
+                </figure>
+                <div className="card-body">
+                  <h3 className="card-title">{product.name}</h3>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
+                      <Star className="w-5 h-5 text-yellow-500 mr-1" />
+                      <span>{product.rating}/5</span>
                     </div>
-                    <div className="card-actions justify-end mt-2">
-                      <button 
-                        onClick={() => handleAddToCart(product)}
-                        className="btn btn-primary w-full"
-                      >
-                        <ShoppingCart className="mr-2" /> Add to Cart
-                      </button>
-                    </div>
+                    <div className="font-bold text-xl">${product.price.toFixed(2)}</div>
+                  </div>
+                  <div className="card-actions justify-end mt-2">
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="btn btn-primary w-full"
+                    >
+                      <ShoppingCart className="mr-2" /> Add to Cart
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       </section>
 
       {/* Benefits Section */}

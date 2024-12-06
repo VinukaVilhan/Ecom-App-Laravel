@@ -10,6 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   adminLogin: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  adminLogout: () => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
 }
@@ -144,10 +145,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       router.push('/pages/login');
     }
   };
+
+
+  const adminLogout = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      
+      // Send logout request to the backend
+      await axios.post('http://127.0.0.1:8000/api/admin/logout', {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      });
+  
+      // Remove the admin token from local storage
+      localStorage.removeItem('adminToken');
+      
+      // Reset user state
+      setUser(null);
+      setIsAuthenticated(false);
+      
+      // Redirect to login page
+      router.push('/pages/login');
+    } catch (error: any) {
+      console.error('Admin logout error:', error);
+      throw new Error(error.response?.data?.message || 'Logout failed');
+    }
+  };
   
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout, adminLogin, isAuthenticated, loading }}>
+    <AuthContext.Provider value={{ user, register, login, logout, adminLogin, adminLogout, isAuthenticated, loading }}>
       {children}
     </AuthContext.Provider>
   );
