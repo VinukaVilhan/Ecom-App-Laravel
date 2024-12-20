@@ -11,26 +11,11 @@ import {
   User,
   LogIn
 } from "lucide-react";
-import Link from "next/link";
+import toast from "react-hot-toast";
 import Navbar from "./components/navbar";
-
-// Enhanced Product Interface: Defines the structure of a product
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  description: string;
-  rating: number;
-  category: string;
-}
-
-// Category Interface: Defines the structure of product categories
-interface Category {
-  id: number;
-  name: string;
-  icon: React.ReactNode;
-}
+import { Product } from "@/types/Product";
+import { Category } from "@/types/Category";
+import { CartItem } from "@/types/CartItem";
 
 export default function Home() {
   // State management for products and UI interactions
@@ -39,6 +24,8 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // Predefined categories with custom SVG icons
   const categories: Category[] = [
@@ -108,18 +95,48 @@ export default function Home() {
   };
 
   // Placeholder for add to cart functionality
-  const handleAddToCart = (product: Product) => {
-    console.log(`Added ${product.name} to cart`);
+  // Replace your existing handleAddToCart function with this:
+  const handleAddToCart = async (product: Product) => {
+    try {
+      setIsAddingToCart(true);
+  
+      const existingCartItems: CartItem[] = JSON.parse(
+        localStorage.getItem("cartItems") || "[]"
+      );
+  
+      const cartItemIndex = existingCartItems.findIndex(
+        (item) => item.product_id === product.id
+      );
+  
+      if (cartItemIndex > -1) {
+        // Update quantity if product exists
+        existingCartItems[cartItemIndex].quantity += 1;
+      } else {
+        // Add new item
+        const cartItem: CartItem = {
+          product_id: product.id,
+          quantity: 1,
+          price: product.price,
+          id: Date.now(), // Unique ID for tracking, optional
+        };
+        existingCartItems.push(cartItem);
+      }
+  
+      // Save updated cart items to localStorage
+      localStorage.setItem("cartItems", JSON.stringify(existingCartItems));
+  
+      // Update local state
+      setCartItems(existingCartItems);
+  
+      toast.success("Item added to cart successfully!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart");
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
-
-  // Loading state component
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
+  
 
   return (
     <div className="min-h-screen bg-base-100">
@@ -217,12 +234,19 @@ export default function Home() {
                     <div className="font-bold text-xl">${product.price.toFixed(2)}</div>
                   </div>
                   <div className="card-actions justify-end mt-2">
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="btn btn-primary w-full"
-                    >
-                      <ShoppingCart className="mr-2" /> Add to Cart
-                    </button>
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="btn btn-primary w-full"
+                    disabled={isAddingToCart}
+                  >
+                    {isAddingToCart ? (
+                      <span className="loading loading-spinner loading-sm"></span>
+                    ) : (
+                      <>
+                        <ShoppingCart className="mr-2" /> Add to Cart
+                      </>
+                    )}
+                  </button>
                   </div>
                 </div>
               </div>

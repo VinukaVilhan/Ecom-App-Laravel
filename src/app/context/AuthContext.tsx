@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
@@ -15,6 +14,13 @@ interface AuthContextType {
   loading: boolean;
 }
 
+interface CartItem {
+  product_id: number;
+  quantity: number;
+}
+
+const BASE_URL = 'http://127.0.0.1:8000/api';
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -27,153 +33,174 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fetchInitialUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (!token) return;
-        
-        await fetchUser(); // Validate token and fetch user details
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+        await fetchUser();
       } catch {
-        logout(); // Logout if fetching fails
-      }finally{
+        await logout();
+      } finally {
         setLoading(false);
       }
     };
-  
+
     fetchInitialUser();
   }, []);
 
   const fetchUser = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://127.0.0.1:8000/api/me', {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }
-      });
-      setUser(response.data);
-      setIsAuthenticated(true);
-    } catch (error: any) {
-      setUser(null);
-      setIsAuthenticated(false);
-      console.error('Failed to fetch user:', error);
-      logout();
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${BASE_URL}/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user');
     }
+
+    const userData = await response.json();
+    setUser(userData);
+    setIsAuthenticated(true);
+  };
+
+  const syncCartItems = async (token: string) => {
+    const localCartItems = localStorage.getItem('cartItems');
+    if (!localCartItems) return;
+
+    const cartItems: CartItem[] = JSON.parse(localCartItems);
+    if (cartItems.length === 0) return;
+
+    const response = await fetch(`${BASE_URL}/cart-items/sync`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ items: cartItems })
+    });
+
+    if (response.ok) {
+      localStorage.removeItem('cartItems');
+      return await response.json();
+    }
+    
+    throw new Error('Failed to sync cart items');
+  };
+
+  const login = async (email: string, password: string) => {
+    const response = await fetch(`${BASE_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Login failed');
+    }
+
+    const { user, token } = await response.json();
+    localStorage.setItem('token', token);
+    setUser(user);
+    setIsAuthenticated(true);
+
+    await syncCartItems(token);
+    router.push('/dashboard');
   };
 
   const register = async (name: string, email: string, password: string, passwordConfirmation: string) => {
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/register', {
+    const response = await fetch(`${BASE_URL}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         name,
         email,
         password,
         password_confirmation: passwordConfirmation
-      });
+      })
+    });
 
-      const { user, token } = response.data;
-      
-      localStorage.setItem('token', token);
-      setUser(user);
-      setIsAuthenticated(true);
-    } catch (error: any) {
-      if (error.response) {
-        throw new Error(error.response.data.error || 'Registration failed');
-      }
-      throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Registration failed');
     }
+
+    const { user, token } = await response.json();
+    localStorage.setItem('token', token);
+    setUser(user);
+    setIsAuthenticated(true);
+
+    await syncCartItems(token);
   };
 
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login', {
-        email,
-        password
-      });
+  const adminLogin = async (email: string, password: string) => {
+    const response = await fetch(`${BASE_URL}/admin/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
 
-      const { user, token } = response.data;
-      
-      localStorage.setItem('token', token);
-      setUser(user);
-      setIsAuthenticated(true);
-      router.push('/dashboard');
-    } catch (error: any) {
-      if (error.response) {
-        throw new Error(error.response.data.message || 'Login failed');
-      }
-      throw error;
-    }
-  };
-
-
-  const adminLogin = async(email: string, password: string)=> {
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/admin/login', {
-        email,
-        password
-      });
-
-      const {token} = response.data;
-
-      localStorage.setItem('adminToken', token);
-      setUser({role: 'admin'});
-      setIsAuthenticated(true);
-      router.push('/pages/adminDashboard')
-    }catch(error: any){
-      if(error.response)
-      {
-        throw new Error(error.response.data.message || 'Admin login failed');
-      }
-      throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Admin login failed');
     }
 
+    const { token } = await response.json();
+    localStorage.setItem('adminToken', token);
+    setUser({ role: 'admin' });
+    setIsAuthenticated(true);
+    router.push('/pages/adminDashboard');
   };
 
   const logout = async () => {
+    const token = localStorage.getItem('token');
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('http://127.0.0.1:8000/api/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-        },
-      });
-  
-      localStorage.removeItem('token');
-      setUser(null);
-      setIsAuthenticated(false);
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      router.push('/pages/login');
-    }
-  };
-
-
-  const adminLogout = async () => {
-    try {
-      const token = localStorage.getItem('adminToken');
-      
-      // Send logout request to the backend
-      await axios.post('http://127.0.0.1:8000/api/admin/logout', {}, {
+      await fetch(`${BASE_URL}/logout`, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
         }
       });
-  
-      // Remove the admin token from local storage
-      localStorage.removeItem('adminToken');
-      
-      // Reset user state
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('cartItems');
       setUser(null);
       setIsAuthenticated(false);
-      
-      // Redirect to login page
       router.push('/pages/login');
-    } catch (error: any) {
-      console.error('Admin logout error:', error);
-      throw new Error(error.response?.data?.message || 'Logout failed');
     }
   };
-  
+
+  const adminLogout = async () => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${BASE_URL}/admin/logout`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Logout failed');
+    }
+
+    localStorage.removeItem('adminToken');
+    setUser(null);
+    setIsAuthenticated(false);
+    router.push('/pages/login');
+  };
 
   return (
     <AuthContext.Provider value={{ user, register, login, logout, adminLogin, adminLogout, isAuthenticated, loading }}>
