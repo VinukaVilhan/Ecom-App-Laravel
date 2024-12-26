@@ -39,7 +39,7 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item, onRemove }) => {
     <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg mb-4 shadow-sm">
       <div className="flex items-center space-x-4">
         <img 
-          src={item.product.image || '/placeholder-product.png'} 
+          src={`http://127.0.0.1:8000/storage/${item.product.image}` || '/placeholder-product.png'} 
           alt={item.product.name} 
           className="w-16 h-16 object-cover rounded-md"
         />
