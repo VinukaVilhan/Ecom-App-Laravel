@@ -124,7 +124,7 @@ export default function CustomerDashboard() {
           onLogout={handleLogout}
         />
 
-        <div className="flex-1 p-6 mt-16 md:mt-0">
+        <div className="flex-1 p-6 mt-16 md:mt-20">
           {activeSection === 'profile' && (
             <div className="grid md:grid-cols-2 gap-6">
               <ProfileCard user={user} />

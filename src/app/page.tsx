@@ -9,13 +9,16 @@ import {
   Shield, 
   CreditCard,
   User,
-  LogIn
+  LogIn,
+  ArrowRight,
+  Heart
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Navbar from "./components/navbar";
 import { Product } from "@/types/Product";
 import { Category } from "@/types/Category";
 import { CartItem } from "@/types/CartItem";
+import Link from "next/link";
 
 export default function Home() {
   // State management for products and UI interactions
@@ -139,47 +142,72 @@ export default function Home() {
   
 
   return (
-    <div className="min-h-screen bg-base-100">
-      {/* Navbar */}
-      <Navbar/>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
 
-      {/* Hero Section */}
-      <div className="hero min-h-screen bg-base-200">
-        <div className="hero-content flex-col lg:flex-row-reverse">
-          <img 
-            src="http://127.0.0.1:8000/storage/heroIMG.jpg" 
-            alt="Hero Product" 
-            className="max-w-sm rounded-lg shadow-2xl" 
-          />
-          <div>
-            <h1 className="text-5xl font-bold">Summer Sale!</h1>
-            <p className="py-6 text-xl">
-              Discover amazing deals on top brands. 
-              Get up to 50% off on selected items and transform your shopping experience.
-            </p>
-            <div className="flex space-x-4">
-              <button className="btn btn-primary">Shop Now</button>
-              <button className="btn btn-ghost">Learn More</button>
+      {/* Hero Section - Enhanced */}
+      <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <div className="container mx-auto px-4 py-24">
+          <div className="flex flex-col lg:flex-row items-center justify-between relative z-10">
+            <div className="lg:w-1/2 mb-12 lg:mb-0">
+              <h1 className="text-6xl font-bold mb-6 leading-tight">
+                Summer Sale 
+                <span className="text-yellow-400">!</span>
+              </h1>
+              <p className="text-xl mb-8 text-gray-100 max-w-lg">
+                Discover amazing deals on top brands with up to 50% off. 
+                Transform your shopping experience today.
+              </p>
+              <div className="flex space-x-4">
+                <button className="px-8 py-3 bg-white text-blue-600 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200">
+                  Shop Now
+                </button>
+                <button className="px-8 py-3 border-2 border-white rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-all duration-200">
+                  View Deals
+                </button>
+              </div>
+            </div>
+            <div className="lg:w-1/2 relative">
+              <img 
+                src="http://127.0.0.1:8000/storage/heroIMG.jpg" 
+                alt="Hero Product" 
+                className="rounded-lg shadow-2xl max-w-md mx-auto transform hover:scale-105 transition-transform duration-300" 
+              />
+              <div className="absolute -bottom-6 right-0 bg-white p-4 rounded-lg shadow-lg">
+                <div className="text-gray-800 font-semibold">Limited Time Offer</div>
+                <div className="text-blue-600 font-bold">Save up to 50%</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Categories Section */}
-      <section className="py-16 bg-base-100">
+      {/* Categories Section - Enhanced */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Shop by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-800">Shop by Category</h2>
+            <Link href="/pages/categoriesPage" className="flex items-center text-blue-600 hover:text-blue-700">
+              View All Categories <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {categories.map((category) => (
               <div 
                 key={category.id} 
-                className="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-pointer"
+                className="group relative overflow-hidden rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <div className="card-body items-center text-center">
-                  <div className="text-primary mb-4">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
+                <div className="p-8">
+                  <div className="text-blue-600 mb-4 transform group-hover:scale-110 transition-transform duration-300">
                     {category.icon}
                   </div>
-                  <h3 className="card-title">{category.name}</h3>
+                  <h3 className="text-xl font-semibold">{category.name}</h3>
+                  <p className="mt-2 text-gray-500 text-sm">Explore {category.name}</p>
+                </div>
+                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <ArrowRight className="w-6 h-6 text-white" />
                 </div>
               </div>
             ))}
@@ -187,101 +215,135 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-16 bg-base-200">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold">Featured Products</h2>
-          <div className="form-control w-full md:w-auto mt-4 md:mt-0">
-            <div className="relative flex items-center">
+      {/* Featured Products Section - Enhanced */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-between items-center mb-12">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">Featured Products</h2>
+              <p className="text-gray-600">Discover our handpicked selection of top products</p>
+            </div>
+            <div className="relative">
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={handleSearch}
-                className="input input-bordered w-full md:w-80 pl-12 pr-4 rounded-lg shadow-md"
+                className="w-72 px-4 py-3 pl-12 rounded-full border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
               />
-              <Search className="absolute left-4 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </div>
-        </div>
-        {filteredProducts.length === 0 ? (
-          <p className="text-center text-gray-500">No products found.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300"
-              >
-                <figure
-                  className="cursor-pointer"
-                  onClick={() => handleProductClick(product)}
+
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No products found matching your search.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {filteredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                 >
-                  <img
-                    src={`http://127.0.0.1:8000/storage/${product.image}`}
-                    alt={product.name}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                </figure>
-                <div className="card-body">
-                  <h3 className="card-title">{product.name}</h3>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <Star className="w-5 h-5 text-yellow-500 mr-1" />
-                      <span>{product.rating}/5</span>
-                    </div>
-                    <div className="font-bold text-xl">${product.price.toFixed(2)}</div>
+                  <div className="relative">
+                    <img
+                      src={`http://127.0.0.1:8000/storage/${product.image}`}
+                      alt={product.name}
+                      className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <button title="Add to Wishlist" className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200">
+                      <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors duration-200" />
+                    </button>
+                    {/* {product.stock < 10 && (
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500 text-white text-sm">
+                        Low Stock
+                      </div>
+                    )} */}
                   </div>
-                  <div className="card-actions justify-end mt-2">
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="btn btn-primary w-full"
-                    disabled={isAddingToCart}
-                  >
-                    {isAddingToCart ? (
-                      <span className="loading loading-spinner loading-sm"></span>
-                    ) : (
-                      <>
-                        <ShoppingCart className="mr-2" /> Add to Cart
-                      </>
-                    )}
-                  </button>
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-200">
+                        {product.name}
+                      </h3>
+                      <div className="flex items-center bg-blue-50 px-2 py-1 rounded-full">
+                        <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                        <span className="text-sm font-medium">{product.rating}</span>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
+                    <div className="flex justify-between items-center">
+                      <div className="text-2xl font-bold text-blue-600">${product.price.toFixed(2)}</div>
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                        disabled={isAddingToCart}
+                      >
+                        {isAddingToCart ? (
+                          <span className="flex items-center">
+                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                            Adding...
+                          </span>
+                        ) : (
+                          <>
+                            <ShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-16 bg-base-100">
+      {/* Benefits Section - Enhanced */}
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex items-center space-x-4">
-              <Truck className="w-12 h-12 text-primary" />
-              <div>
-                <h3 className="text-xl font-bold">Free Shipping</h3>
-                <p className="text-base-content/70">On orders over $100</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-blue-50 rounded-full mr-4">
+                  <Truck className="w-8 h-8 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">Free Shipping</h3>
+                  <p className="text-gray-600">On orders over $100</p>
+                </div>
               </div>
+              <p className="text-gray-500">Enjoy free shipping on all orders exceeding $100. Fast and reliable delivery to your doorstep.</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Shield className="w-12 h-12 text-primary" />
-              <div>
-                <h3 className="text-xl font-bold">Secure Payment</h3>
-                <p className="text-base-content/70">100% secure payment</p>
+            
+            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-green-50 rounded-full mr-4">
+                  <Shield className="w-8 h-8 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">Secure Payment</h3>
+                  <p className="text-gray-600">100% secure payment</p>
+                </div>
               </div>
+              <p className="text-gray-500">Shop with confidence using our encrypted payment system. Your security is our priority.</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <CreditCard className="w-12 h-12 text-primary" />
-              <div>
-                <h3 className="text-xl font-bold">Easy Returns</h3>
-                <p className="text-base-content/70">30-day return policy</p>
+            
+            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-purple-50 rounded-full mr-4">
+                  <CreditCard className="w-8 h-8 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">Easy Returns</h3>
+                  <p className="text-gray-600">30-day return policy</p>
+                </div>
               </div>
+              <p className="text-gray-500">Not satisfied? Return your purchase within 30 days for a full refund, no questions asked.</p>
             </div>
           </div>
         </div>
       </section>
-    </div>)}
+    </div>
+  );
+}
