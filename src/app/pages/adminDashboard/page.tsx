@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import AdminNavbar from '@/app/components/admin/topNavigationBar';
 import ProductManagement from '@/app/components/admin/dashboard/products';
+import ProtectedRoute from '@/app/middleware/ProtectedRoutes';
 
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<'dashboard' | 'products' | 'users' | 'orders'>('dashboard');
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen bg-base-200">
       <AdminNavbar />
       
@@ -38,6 +40,7 @@ const AdminDashboard: React.FC = () => {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

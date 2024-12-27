@@ -19,6 +19,8 @@ import { Product } from "@/types/Product";
 import { Category } from "@/types/Category";
 import { CartItem } from "@/types/CartItem";
 import Link from "next/link";
+import { Carousel } from "react-responsive-carousel";
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 export default function Home() {
   // State management for products and UI interactions
@@ -169,11 +171,38 @@ export default function Home() {
               </div>
             </div>
             <div className="lg:w-1/2 relative">
-              <img 
-                src="http://127.0.0.1:8000/storage/heroIMG.jpg" 
-                alt="Hero Product" 
-                className="rounded-lg shadow-2xl max-w-md mx-auto transform hover:scale-105 transition-transform duration-300" 
-              />
+              <div className="w-full max-w-md mx-auto"> {/* Added container with fixed width */}
+                <Carousel
+                  showArrows={true}
+                  showThumbs={false}
+                  infiniteLoop={true}
+                  autoPlay={true}
+                  interval={2000}
+                  className="rounded-lg shadow-2xl"
+                  >
+                  <div className="aspect-w-16 aspect-h-9"> {/* Added aspect ratio container */}
+                    <img 
+                    src="http://127.0.0.1:8000/storage/heroIMG1.png" 
+                    alt="Hero Product 1" 
+                    className="rounded-lg shadow-2xl w-full h-96 object-cover transform hover:scale-105 transition-transform duration-300" 
+                    />
+                  </div>
+                  <div className="aspect-w-16 aspect-h-9">
+                    <img 
+                    src="http://127.0.0.1:8000/storage/heroIMG2.jpg" 
+                    alt="Hero Product 2" 
+                    className="rounded-lg shadow-2xl w-full h-96 object-cover transform hover:scale-105 transition-transform duration-300" 
+                    />
+                  </div>
+                  <div className="aspect-w-16 aspect-h-9">
+                    <img 
+                    src="http://127.0.0.1:8000/storage/heroIMG3.jpeg" 
+                    alt="Hero Product 3" 
+                    className="rounded-lg shadow-2xl w-full h-96 object-cover transform hover:scale-105 transition-transform duration-300" 
+                    />
+                  </div>
+                </Carousel>
+              </div>
               <div className="absolute -bottom-6 right-0 bg-white p-4 rounded-lg shadow-lg">
                 <div className="text-gray-800 font-semibold">Limited Time Offer</div>
                 <div className="text-blue-600 font-bold">Save up to 50%</div>

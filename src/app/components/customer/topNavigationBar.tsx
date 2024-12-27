@@ -41,11 +41,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
       icon: Package, 
       label: 'My Orders' 
     },
-    { 
-      section: 'wishlist' as const, 
-      icon: Heart, 
-      label: 'Wishlist' 
-    }
+    
   ];
 
   const toggleMobileMenu = () => {

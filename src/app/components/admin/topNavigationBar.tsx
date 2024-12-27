@@ -123,9 +123,6 @@ const AdminNavbar = () => {
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                   <div className="py-1">
-                    <Link href="/admin/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Profile Settings
-                    </Link>
                     <button className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
                       <LogOut className="h-4 w-4 mr-2" />
                       Sign out
@@ -141,15 +138,15 @@ const AdminNavbar = () => {
         {isMenuOpen && (
           <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
-                <Link href="/admin/products" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
+                <Link href="/pages/adminProduct" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
                     <Package className="h-5 w-5 mr-2" />
                     Products
                 </Link>
-                <Link href="/admin/deals" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
+                <Link href="/pages/adminDeals" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
                     <Handshake className="h-5 w-5 mr-2" />
                     Deals
                 </Link>
-                <Link href="/admin/users" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
+                <Link href="/pages/adminUsers" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
                     <Users className="h-5 w-5 mr-2" />
                     Users
                 </Link>
