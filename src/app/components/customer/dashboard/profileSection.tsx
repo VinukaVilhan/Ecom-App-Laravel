@@ -13,7 +13,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user }) => (
       <div className="avatar">
         <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
           <img 
-            src={user?.photoURL || '/default-avatar.png'} 
+            src={'../../../../../public/images/defaultProfile.png'} 
             alt="User Profile" 
             className="object-cover"
           />

@@ -9,13 +9,21 @@ import {
   User,
   Heart,
   Tag,
-  Grid
+  Grid,
+  ChevronDown
 } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+
+  const categories = [
+    { name: 'Electronics', href: '/pages/electronicsPage' },
+    { name: 'Fashion', href: '/pages/fashionPage' },
+    { name: 'Home & Kitchen', href: '/pages/homeAppliancePage' },
+    { name: 'Beauty', href: '/pages/beautyPage' }
+  ];
 
   return (
     <nav className="bg-white border-b shadow-sm">
@@ -42,20 +50,46 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:items-center lg:space-x-6">
-            <Link href="/pages/categoriesPage" className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-900">
-              <Grid className="h-5 w-5 mr-2" />
-              Categories
-            </Link>
-            <Link href="/deals" className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-900">
+            {/* Categories Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-900"
+              >
+                <Grid className="h-5 w-5 mr-2" />
+                Categories
+                <ChevronDown className="h-4 w-4 ml-1" />
+              </button>
+
+              {isCategoriesOpen && (
+                <div className="absolute z-10 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    {categories.map((category) => (
+                      <Link
+                        key={category.name}
+                        href={category.href}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link href="/pages/dealsPage" className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-900">
               <Tag className="h-5 w-5 mr-2" />
               Deals
             </Link>
-            
+            <Link href="/pages/productMainPage" className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-900">
+              <Tag className="h-5 w-5 mr-2" />
+              Products
+            </Link>
           </div>
 
           {/* Right section - Search, cart, and auth */}
           <div className="flex items-center space-x-4">
-            {/* Search Bar */}
             <div className="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-2">
               <Search className="h-5 w-5 text-gray-500" />
               <input
@@ -65,7 +99,6 @@ const Navbar = () => {
               />
             </div>
 
-            {/* Shopping Cart */}
             <div className="relative">
               <button
                 onClick={() => setIsCartOpen(!isCartOpen)}
@@ -85,7 +118,6 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Auth Buttons */}
             <div className="hidden md:flex items-center space-x-2">
               <Link href="/pages/login" className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md">
                 <LogIn className="h-5 w-5 mr-2" />
@@ -103,11 +135,18 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <Link href="/categories" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
-                <Grid className="h-5 w-5 mr-2" />
-                Categories
-              </Link>
-              <Link href="/deals" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
+              {categories.map((category) => (
+                <Link
+                  key={category.name}
+                  href={category.href}
+                  className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100"
+                >
+                  <Grid className="h-5 w-5 mr-2" />
+                  {category.name}
+                </Link>
+              ))}
+              <div className="border-t border-gray-200 my-2"></div>
+              <Link href="/pages/dealsPage" className="flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">
                 <Tag className="h-5 w-5 mr-2" />
                 Deals
               </Link>

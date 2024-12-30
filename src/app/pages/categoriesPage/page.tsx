@@ -4,7 +4,6 @@ import axios from 'axios';
 import Navbar from '@/app/components/navbar';
 import { Product } from '@/types/Product';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import ProtectedRoute from '@/app/middleware/ProtectedRoutes';
 
 const CategoriesPage: React.FC = () => {
     const [productsByCategory, setProductsByCategory] = useState<{ [key: string]: Product[] }>({});
@@ -70,7 +69,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, products })
     const displayedProducts = showAll ? products : products.slice(0, 5);
 
     return (
-        <ProtectedRoute>
+
         <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 capitalize">{category}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
@@ -106,7 +105,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, products })
                 </div>
             )}
         </div>
-        </ProtectedRoute>
+
     );
 };
 

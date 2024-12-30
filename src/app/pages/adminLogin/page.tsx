@@ -101,6 +101,14 @@ export default function AdminLogin() {
                     {isLoading ? 'Logging in...' : 'Admin Login'}
                 </button>
                 </div>
+                <div className="text-center mt-4">
+                  <p>
+                    Are you an User? {' '}
+                    <a href="/pages/login" className="link link-primary">
+                      User Login
+                    </a>
+                  </p>
+                </div>
             </form>
             </div>
         </div>

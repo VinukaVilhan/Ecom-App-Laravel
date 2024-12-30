@@ -16,11 +16,17 @@ import {
 import toast from "react-hot-toast";
 import Navbar from "./components/navbar";
 import { Product } from "@/types/Product";
-import { Category } from "@/types/Category";
 import { CartItem } from "@/types/CartItem";
 import Link from "next/link";
 import { Carousel } from "react-responsive-carousel";
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
+interface Category {
+  id: number;
+  name: string;
+  icon: React.ReactNode;
+  link: string;
+}
 
 export default function Home() {
   // State management for products and UI interactions
@@ -39,28 +45,32 @@ export default function Home() {
       name: "Electronics", 
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
+      </svg>,
+      link: "/pages/electronicsPage"
     },
     { 
       id: 2, 
       name: "Fashion", 
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-      </svg>
+      </svg>,
+      link: "/pages/fashionPage"
     },
     { 
       id: 3, 
       name: "Home & Kitchen", 
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
+      </svg>,
+      link: "/pages/homeAppliancePage"
     },
     { 
       id: 4, 
       name: "Beauty", 
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-      </svg>
+      </svg>,
+      link: "/pages/beautyPage"
     }
   ];
 
@@ -236,7 +246,9 @@ export default function Home() {
                   <p className="mt-2 text-gray-500 text-sm">Explore {category.name}</p>
                 </div>
                 <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <ArrowRight className="w-6 h-6 text-white" />
+                  <Link href={category.link} key={category.id}>
+                    <ArrowRight className="w-6 h-6 text-white" />
+                  </Link>
                 </div>
               </div>
             ))}
@@ -304,20 +316,20 @@ export default function Home() {
                     <div className="flex justify-between items-center">
                       <div className="text-2xl font-bold text-blue-600">${product.price.toFixed(2)}</div>
                       <button
-                        onClick={() => handleAddToCart(product)}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
-                        disabled={isAddingToCart}
+                      onClick={() => handleAddToCart(product)}
+                      className={`flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200 ${isAddingToCart ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      disabled={isAddingToCart}
                       >
-                        {isAddingToCart ? (
-                          <span className="flex items-center">
-                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
-                            Adding...
-                          </span>
-                        ) : (
-                          <>
-                            <ShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
-                          </>
-                        )}
+                      {isAddingToCart ? (
+                        <span className="flex items-center">
+                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                        Adding...
+                        </span>
+                      ) : (
+                        <>
+                        <ShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
+                        </>
+                      )}
                       </button>
                     </div>
                   </div>

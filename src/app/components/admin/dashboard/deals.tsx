@@ -48,7 +48,6 @@ const DealManagement: React.FC = () => {
     try {
         const response = await axios.get('http://127.0.0.1:8000/api/deals', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
             'Accept': 'application/json'
           }
         });
