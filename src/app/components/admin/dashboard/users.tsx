@@ -8,7 +8,6 @@ interface User {
   id: number;
   name: string;
   email: string;
-  phone_number?: string;
   created_at: string;
 }
 
@@ -95,7 +94,6 @@ const UserManagement = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Email</th>
-              <th>Phone</th>
               <th>Joined Date</th>
               <th>Actions</th>
             </tr>
@@ -108,12 +106,6 @@ const UserManagement = () => {
                 <td className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   {user.email}
-                </td>
-                <td>
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    {user.phone_number || 'N/A'}
-                  </div>
                 </td>
                 <td>
                   <div className="flex items-center gap-2">

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Navbar from '@/app/components/navbar';
 import { CartItem } from "@/types/CartItem";
 import toast from "react-hot-toast";
+import { useRouter } from 'next/navigation'
 
 interface Product {
   id: number;
@@ -17,6 +18,7 @@ interface Product {
 }
 
 const ProductsPage: React.FC = () => {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -95,9 +97,23 @@ const ProductsPage: React.FC = () => {
   };
 
 
-    const handleBuyNow = (product: Product) => {
-        console.log('Buy now:', product);
-    };
+  const isLoggedIn = (): boolean => {
+    // Implement your logic to check if the user is logged in
+    return !!localStorage.getItem('userToken');
+  };
+  
+  const handleBuyNow = (product: Product) => {
+    handleAddToCart(product);
+
+    if (!isLoggedIn()) {
+      alert('Please log in to proceed with the purchase.');
+      localStorage.setItem('redirectAfterLogin', '/customer/dashboard?activeTab=cart');
+      router.push('/pages/login');
+      return;
+    }
+
+    router.push('/pages/customerDashboard?activeTab=cart');
+  };
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

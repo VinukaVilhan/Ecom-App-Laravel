@@ -82,7 +82,10 @@ const ProductManagement: React.FC = () => {
       }
 
       const response = await axios.post('http://127.0.0.1:8000/api/products', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }
       });
       
       setProducts([...products, response.data.product]);
@@ -111,6 +114,10 @@ const ProductManagement: React.FC = () => {
         price: selectedProduct.price,
         stock: selectedProduct.stock,
         category: selectedProduct.category
+      }, {
+        headers: { 
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }
       });
 
       setProducts(products.map(p => p.id === selectedProduct.id ? response.data.product : p));
@@ -124,7 +131,10 @@ const ProductManagement: React.FC = () => {
   // Delete Product Handler
   const handleDeleteProduct = async (id: number) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/productdelete/${id}`);
+      await axios.delete(`http://127.0.0.1:8000/api/productdelete/${id}`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+      }
+      );
       setProducts(products.filter(p => p.id !== id));
       showNotification('Product deleted successfully', 'success');
     } catch (error) {

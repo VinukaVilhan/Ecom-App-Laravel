@@ -8,14 +8,13 @@ import { Camera, User } from 'lucide-react';
 const EditProfile: React.FC = () => {
     const { user, logout } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [formData, setFormData] = useState({
-        name: user?.displayName || '',
+        name: user?.name || '',
         email: user?.email || '',
-        phone: user?.phoneNumber || '',
-        address: user?.address || '',
         password: '',
-        newPassword: '',
-        confirmPassword: ''
+        password_confirmation: '',
     });
     const [activeSection, setActiveSection] = useState<'profile' | 'cart' | 'orders' | 'wishlist'>('profile');
 
@@ -27,19 +26,71 @@ const EditProfile: React.FC = () => {
         }));
     };
 
+    const updateProfile = async (data: any) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/profile/update', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update profile');
+            }
+
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (isEditing) {
-            try {
-                // Here you would implement your update logic
-                console.log('Updating profile:', formData);
-                // After successful update
-                setIsEditing(false);
-            } catch (error) {
-                console.error('Error updating profile:', error);
-            }
-        } else {
+        if (!isEditing) {
             setIsEditing(true);
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            setMessage(null);
+            const updateData = {
+                name: formData.name,
+                email: formData.email,
+                ...(formData.password && {
+                    password: formData.password,
+                    password_confirmation: formData.password_confirmation
+                })
+            };
+
+            const response = await updateProfile(updateData);
+            
+            setMessage({
+                type: 'success',
+                text: 'Profile updated successfully'
+            });
+
+            setFormData(prev => ({
+                ...prev,
+                password: '',
+                password_confirmation: ''
+            }));
+            
+            setIsEditing(false);
+            // Update the user context if needed
+            // updateUser(response.user);
+        } catch (error) {
+            setMessage({
+                type: 'error',
+                text: error instanceof Error ? error.message : 'Failed to update profile'
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -63,6 +114,14 @@ const EditProfile: React.FC = () => {
                 <main className="container mx-auto px-4 pt-20">
                     <div className="max-w-2xl mx-auto">
                         <div className="bg-white p-8 rounded-lg shadow-md">
+                            {message && (
+                                <div className={`mb-4 p-4 rounded ${
+                                    message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                }`}>
+                                    {message.text}
+                                </div>
+                            )}
+
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-2xl font-bold">Profile Settings</h2>
                                 <button
@@ -101,50 +160,52 @@ const EditProfile: React.FC = () => {
                                                 className="hidden"
                                                 accept="image/*"
                                                 onChange={handlePhotoUpload}
-                                                title="Upload your profile photo"
-                                                placeholder="Upload your profile photo"
+                                                title="Upload profile photo"
+                                                aria-label="Upload profile photo"
                                             />
                                         </label>
                                     )}
                                 </div>
-                                <h3 className="mt-4 text-xl font-semibold">{user?.displayName || 'User'}</h3>
+                                <h3 className="mt-4 text-xl font-semibold">{user?.name || 'User'}</h3>
                                 <p className="text-gray-500">{user?.email}</p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">
+                                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                                             Name
                                         </label>
                                         <input
+                                            id="name"
                                             type="text"
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
-                                            disabled={!isEditing}
-                                            title='Name'
-                                            placeholder='Name'
+                                            disabled={!isEditing || isLoading}
                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                                            required
+                                            title="Enter your name"
+                                            placeholder="Enter your name"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">
+                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                                             Email
                                         </label>
                                         <input
+                                            id="email"
                                             type="email"
                                             name="email"
-                                            title='email'
-                                            placeholder='Email'
                                             value={formData.email}
                                             onChange={handleChange}
-                                            disabled={!isEditing}
+                                            disabled={!isEditing || isLoading}
                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                                            required
+                                            title="Enter your email"
+                                            placeholder="Enter your email"
                                         />
                                     </div>
-                                    
-                                    
                                 </div>
 
                                 {isEditing && (
@@ -152,31 +213,37 @@ const EditProfile: React.FC = () => {
                                         <h3 className="text-lg font-medium">Change Password</h3>
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700">
-                                                    Current Password
-                                                </label>
-                                                <input
-                                                    type="password"
-                                                    name="password"
-                                                    title='password'
-                                                    placeholder='Password'
-                                                    value={formData.password}
-                                                    onChange={handleChange}
-                                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700">
+                                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                                                     New Password
                                                 </label>
                                                 <input
+                                                    id="password"
                                                     type="password"
-                                                    name="newPassword"
-                                                    title='newPassword'
-                                                    placeholder='New Password'
-                                                    value={formData.newPassword}
+                                                    name="password"
+                                                    value={formData.password}
                                                     onChange={handleChange}
+                                                    disabled={isLoading}
                                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                                                    minLength={6}
+                                                    title="Enter new password"
+                                                    placeholder="Enter new password"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
+                                                    Confirm New Password
+                                                </label>
+                                                <input
+                                                    id="password_confirmation"
+                                                    type="password"
+                                                    name="password_confirmation"
+                                                    value={formData.password_confirmation}
+                                                    onChange={handleChange}
+                                                    disabled={isLoading}
+                                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                                                    minLength={6}
+                                                    title="Confirm new password"
+                                                    placeholder="Confirm new password"
                                                 />
                                             </div>
                                         </div>
@@ -187,13 +254,15 @@ const EditProfile: React.FC = () => {
                                     <div className="flex space-x-4 pt-6">
                                         <button
                                             type="submit"
+                                            disabled={isLoading}
                                             className="flex-1 btn btn-primary"
                                         >
-                                            Save Changes
+                                            {isLoading ? 'Saving...' : 'Save Changes'}
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setIsEditing(false)}
+                                            disabled={isLoading}
                                             className="flex-1 btn btn-outline"
                                         >
                                             Cancel

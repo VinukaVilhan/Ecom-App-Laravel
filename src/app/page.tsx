@@ -87,6 +87,7 @@ export default function Home() {
       setIsLoading(false);
     }
   }, []);
+  
 
   // Fetch products when component mounts
   useEffect(() => {

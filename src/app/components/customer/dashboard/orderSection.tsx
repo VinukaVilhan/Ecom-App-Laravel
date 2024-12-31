@@ -57,7 +57,7 @@ export const OrdersSection: React.FC = () => {
   }, []);
 
   const handleContinueShopping = () => {
-    router.push('/products');
+    router.push('/pages/register');
   };
 
   if (isLoading) {
